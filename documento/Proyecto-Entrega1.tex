@@ -1,0 +1,434 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage[a4paper,top=3.8cm,bottom=2.8cm,left=2cm,right=2cm,headheight=2.3cm,headsep=0.35cm,footskip=1.25cm]{geometry}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{tocloft}
+\usepackage[hidelinks]{hyperref}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\captionsetup{font=small,labelfont=bf}
+\setlist{itemsep=2pt,topsep=3pt}
+\setlength{\parskip}{0.3em}
+\setlength{\emergencystretch}{1.5em}
+
+\definecolor{hdrgray}{gray}{0.85}
+
+% indice: leaders punteados tambien en secciones
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\setlength{\cftbeforesecskip}{4pt}
+
+% caja de encabezado (cada pagina), a lo ancho del cuerpo
+\newcommand{\encabezado}{\scriptsize
+\setlength{\tabcolsep}{3pt}%
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}m{4.6cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}m{3.2cm}|}
+\hline
+\bfseries Pontificia Universidad Javeriana &
+PROCESO\newline Ciclo de Desarrollo de Software\newline Documento: Proyecto - Entrega I &
+Ingeniería en Sistemas\\
+\hline
+\end{tabularx}}
+
+% caja de pie (cada pagina), a lo ancho del cuerpo
+\newcommand{\piedepagina}{\scriptsize
+\setlength{\tabcolsep}{3pt}%
+\begin{tabularx}{\textwidth}{|m{4.6cm}|>{\centering\arraybackslash}X|>{\raggedleft\arraybackslash}m{3.2cm}|}
+\hline
+Joshua Mendez\newline Edinson Pedroza &
+\begin{tabular}{@{}c@{}}Pontificia Universidad Javeriana\\ Ingeniería en Sistemas\end{tabular} &
+Fecha: \today\newline Página \thepage{} de \pageref{LastPage}\\
+\hline
+\end{tabularx}}
+
+\fancypagestyle{plantilla}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+  \fancyhead[C]{\encabezado}%
+  \fancyfoot[C]{\piedepagina}%
+}
+% que el estilo "plain" (portada, índice) también use la plantilla
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+  \fancyhead[C]{\encabezado}%
+  \fancyfoot[C]{\piedepagina}%
+}
+
+% borde de pagina alrededor del cuerpo
+\AddToShipoutPictureBG{%
+ \begin{tikzpicture}[remember picture,overlay]
+  \draw[line width=0.5pt]
+    ([xshift=2cm,yshift=2.35cm]current page.south west) rectangle
+    ([xshift=-2cm,yshift=-3.6cm]current page.north east);
+ \end{tikzpicture}}
+
+\pagestyle{plantilla}
+
+\begin{document}
+\thispagestyle{plantilla}
+
+% -------- PORTADA --------
+\vspace*{5.5cm}
+\begin{center}
+{\fontsize{26}{30}\selectfont\bfseries PROYECTO DEL CURSO - ENTREGA I}\\[0.5cm]
+{\large Sistema bajo prueba: Demoblaze}\\[1.6cm]
+{\large\bfseries VERSIÓN 1.0}\\[2.5cm]
+{\normalsize Joshua Mendez}\\[0.15cm]
+{\normalsize Edinson Pedroza}\\[0.25cm]
+{\normalsize Construcción de Software y Pruebas \quad Grupo A \quad 2026-2}\\[0.25cm]
+{\normalsize Profesora: Claudia Martínez}
+\end{center}
+\clearpage
+
+% -------- HOJA RESUMEN DE MODIFICACIONES --------
+\phantomsection\addcontentsline{toc}{section}{Hoja resumen de modificaciones}
+\vspace*{0.8cm}
+\begin{center}\underline{\textbf{\large HOJA RESUMEN DE MODIFICACIONES}}\end{center}
+\vspace{0.6cm}
+{\small
+\renewcommand{\arraystretch}{1.5}
+\noindent\begin{tabularx}{\textwidth}{|c|c|Y|L{2.7cm}|L{2.7cm}|}
+\hline
+\rowcolor{black}
+\textcolor{white}{\textbf{Versión}} & \textcolor{white}{\textbf{Fecha}} & \textcolor{white}{\textbf{Cambios respecto de la versión anterior}} & \textcolor{white}{\textbf{Preparado por}} & \textcolor{white}{\textbf{Aprobado por}}\\
+\hline
+1.0 & \today & Versión inicial & Joshua Mendez\newline Edinson Pedroza & Claudia Martínez\\
+\hline
+\end{tabularx}}
+\clearpage
+
+% -------- ÍNDICE --------
+\renewcommand{\contentsname}{ÍNDICE}
+\renewcommand{\cfttoctitlefont}{\hfill\large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\tableofcontents
+\clearpage
+
+%==================================================================
+%  SECCIONES 1 A 6
+%==================================================================
+\input{partes/sec-1-6.tex}
+
+%==================================================================
+%  SECCIÓN 7 — DOCUMENTO DE PLAN DE PRUEBAS (resumen + remisión a Anexo A)
+%==================================================================
+\FloatBarrier
+\section*{7. Documento de Plan de Pruebas}
+\phantomsection\addcontentsline{toc}{section}{7. Documento de Plan de Pruebas}
+
+El plan de pruebas y la estrategia de pruebas completos del proyecto —alcance, criterios
+de entrada y salida (DoR/DoD), estrategia de pruebas, entregables, dependencias, entorno
+de pruebas, gestión de riesgos y roles y responsabilidades— se desarrollan en el
+documento de \textbf{Plan de Pruebas} del equipo, que se adjunta a esta entrega como
+\textbf{Anexo A} (archivo \texttt{plan-completo-ejecutado.pdf}). Ese documento es, además,
+la versión \emph{ejecutada} del plan: embebe los resultados reales de las pruebas de
+integración, rendimiento, seguridad y compatibilidad con sus evidencias. Aquí se resumen
+sus puntos clave y el detalle queda en el anexo.
+
+\begin{itemize}
+  \item \textbf{Alcance (sección 1 del plan).} Se prueba Demoblaze por caja negra sobre
+        el entorno de producción del proveedor, cubriendo doce módulos (catálogo, detalle,
+        carrito, registro, autenticación, orden de compra, contacto, interfaz y
+        accesibilidad, rendimiento, integración sistema-producto, seguridad y
+        compatibilidad). Quedan fuera las pruebas de componente e integración entre
+        componentes (exigen el código fuente, no disponible) y las de denegación de
+        servicio.
+  \item \textbf{Criterios de entrada y salida (sección 2 del plan).} El DoR exige plan y
+        casos aprobados, prueba de sanidad superada, navegador y datos de prueba
+        definidos. El DoD fija dos criterios: \textbf{S1} —100\,\% de los casos de
+        prioridad alta ejecutados y al menos el 80\,\% del total— y \textbf{S2} —al menos
+        el 90\,\% de los casos ejecutados aprobados—, además del registro completo de
+        defectos y el informe de resumen.
+  \item \textbf{Estrategia de pruebas (sección 3 del plan).} Trabajo a nivel de sistema,
+        con las cuatro técnicas de caja negra (partición de equivalencias, valores límite,
+        tabla de decisión y arreglos ortogonales), priorización por riesgo (primero el
+        flujo de compra), ejecución manual y criterios de referencia basados en estándares
+        públicos: ISO/IEC 25010, WCAG 2.1, las métricas web esenciales de Google y las
+        convenciones del dominio de comercio electrónico.
+  \item \textbf{Entregables, dependencias y entorno (secciones 4 a 6 del plan).} Los
+        entregables son el plan, la suite de casos, el registro de ejecución, el reporte
+        de defectos, las evidencias y el informe de resumen. La dependencia principal es
+        que el sitio —un servicio gratuito de un tercero, sin acuerdo de nivel de
+        servicio— esté disponible; no hay un ambiente de pruebas separado, por lo que se
+        prueba directamente sobre la producción compartida del proveedor.
+  \item \textbf{Gestión de riesgos y roles (secciones 7 y 8 del plan).} Se usa una
+        clasificación de severidad en tres niveles (crítico, medio, leve), se separan las
+        restricciones asumidas (C1--C3) de los riesgos gestionables (R1--R6) y se asignan
+        los roles de forma que el diseño de los casos (Joshua Mendez) y su ejecución
+        (Edinson Pedroza) recaigan en personas distintas, para atenuar el sesgo de
+        confirmación.
+\end{itemize}
+
+\noindent Para el detalle completo de cada punto, con sus tablas y evidencias, véase el
+\textbf{Anexo A}.
+
+%==================================================================
+%  SECCIÓN 8 — DISEÑO Y DOCUMENTACIÓN DE CASOS (ARREGLOS ORTOGONALES)
+%==================================================================
+\input{partes/sec-8.tex}
+
+%==================================================================
+%  SECCIÓN 9 — REPORTE DE RESULTADOS Y EVIDENCIAS DE EJECUCIÓN
+%==================================================================
+\FloatBarrier
+\section*{9. Reporte de resultados y evidencias de ejecución}
+\phantomsection\addcontentsline{toc}{section}{9. Reporte de resultados y evidencias de ejecución}
+
+Esta sección consolida los \textbf{resultados reales ya existentes} de la ejecución del
+plan. El trabajo de ejecución se hizo sobre los \textbf{60 casos del plan} (identificadores
+\texttt{CP-*}); su detalle caso por caso, con el registro de ejecución, el reporte de
+defectos y las evidencias gráficas, está en el \textbf{Anexo A} (plan ejecutado) y en la
+\textbf{suite de casos} (Anexo B, hojas \emph{Registro de ejecución} y \emph{Reporte de
+defectos}). Las cifras de abajo se toman directamente de ese registro, sin redondeos que
+favorezcan el resultado.
+
+\subsection*{9.1 Resumen de ejecución}
+\addcontentsline{toc}{subsection}{9.1 Resumen de ejecución}
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[htb]\centering\small
+\caption{Resumen honesto de la ejecución (60 casos del plan).}\label{tab:resumen-ejec}
+\begin{tabularx}{\textwidth}{@{}Y >{\raggedleft\arraybackslash}p{2.2cm} >{\raggedleft\arraybackslash}p{2.6cm}@{}}
+\toprule
+\textbf{Indicador} & \textbf{Casos} & \textbf{\% del registro} \\
+\midrule
+Casos del plan registrados          & 60 & 100,0\,\% \\
+\midrule
+\quad Aprobados                     & 24 & 40,0\,\% \\
+\quad Fallidos                      & 20 & 33,3\,\% \\
+\quad Bloqueados (restricción del plan) & 12 & 20,0\,\% \\
+\quad No concluyentes               & 1  & 1,7\,\% \\
+\quad No ejecutados (fin de ventana) & 3  & 5,0\,\% \\
+\midrule
+\textbf{Casos ejecutados (aprobados + fallidos)} & \textbf{44} & \textbf{73,3\,\%} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[htb]\centering\small
+\caption{Tasas derivadas y evaluación de los criterios de salida.}\label{tab:tasas}
+\begin{tabularx}{\textwidth}{@{}L{6.6cm} >{\raggedright\arraybackslash}p{3.0cm} Y@{}}
+\toprule
+\textbf{Métrica / criterio} & \textbf{Valor} & \textbf{Estado} \\
+\midrule
+Cobertura de ejecución (44 ejecutados / 60 registrados) & 73,3\,\% & --- \\
+Tasa de aprobación (24 aprobados / 44 ejecutados) & 54,5\,\% & --- \\
+\midrule
+S1. Cobertura de ejecución $\geq$ 80\,\% & 73,3\,\% & \textbf{No cumple} \\
+S2. Tasa de aprobación $\geq$ 90\,\% & 54,5\,\% & \textbf{No cumple} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+Ninguno de los dos criterios de salida se cumple, y conviene leer por qué sin maquillar
+las cifras. La \textbf{tasa de aprobación} es del 54,5\,\% porque el sistema bajo prueba
+es un sitio de demostración con defectos reales: los 20 casos fallidos no son errores de
+ejecución, sino comportamientos defectuosos del producto que quedaron documentados (sección
+9.2). Encontrar y registrar esos fallos es, de hecho, el objetivo del ejercicio sobre un
+producto de terceros que no se puede corregir. La \textbf{cobertura} se queda en 73,3\,\%
+por dos motivos trazables en el registro: 12 casos están \emph{bloqueados por las
+restricciones del propio plan} —no se crean cuentas ni se escriben contraseñas en un sitio
+ajeno (módulos Registro y Autenticación y el caso de compra con sesión), y las pruebas de
+carga y estrés no se ejecutan sin un entorno propio ni autorización escrita del
+propietario (restricción C1 del plan)—, y 4 casos más quedaron sin cerrar en la ventana de
+trabajo (3 no ejecutados y 1 no concluyente). Si se descuentan los 12 casos no ejecutables
+por restricción, la cobertura sobre lo que sí era ejecutable (44 de 48) sube al 91,7\,\%.
+
+\subsection*{9.2 Defectos registrados}
+\addcontentsline{toc}{subsection}{9.2 Defectos registrados}
+
+La ejecución produjo \textbf{15 defectos}, clasificados por severidad según la sección 7
+del plan. La Tabla~\ref{tab:def-sev} los resume por nivel y la Tabla~\ref{tab:def-lista}
+los lista. El detalle completo (pasos de reproducción, resultado obtenido frente al
+esperado y evidencia gráfica) está en el reporte de defectos de la suite (Anexo B) y en el
+Anexo A.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[htb]\centering\small
+\caption{Defectos por severidad.}\label{tab:def-sev}
+\begin{tabularx}{\textwidth}{@{}Y >{\raggedleft\arraybackslash}p{3cm}@{}}
+\toprule
+\textbf{Severidad} & \textbf{Cantidad} \\
+\midrule
+Crítico & 2 \\
+Medio   & 9 \\
+Leve    & 4 \\
+\midrule
+\textbf{Total} & \textbf{15} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{@{}L{1.3cm} L{1.4cm} L{3.0cm} L{10.3cm}@{}}
+\caption{Listado de defectos registrados en la ejecución.}\label{tab:def-lista}\\
+\toprule
+\textbf{ID} & \textbf{Severidad} & \textbf{Módulo} & \textbf{Descripción} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{@{}l}{\footnotesize\emph{Tabla~\ref{tab:def-lista} (continuación)}}\\
+\toprule
+\textbf{ID} & \textbf{Severidad} & \textbf{Módulo} & \textbf{Descripción} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r@{}}{\footnotesize\emph{continúa en la página siguiente}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+DEF-03 & Crítico & Orden de compra & Se puede completar una compra con el carrito vacío y se emite un comprobante por 0 USD. \\
+DEF-04 & Crítico & Orden de compra & El número de tarjeta no se valida: acepta letras y símbolos. \\
+DEF-01 & Medio & Interfaz y accesibilidad & Las etiquetas de los formularios no están asociadas a sus campos (WCAG 1.3.1 y 4.1.2). \\
+DEF-02 & Medio & Detalle de producto & Un producto inexistente se muestra como si existiera y se puede agregar al carrito. \\
+DEF-05 & Medio & Orden de compra & La fecha del comprobante muestra el mes anterior al real. \\
+DEF-06 & Medio & Contacto & El formulario de contacto acepta campos vacíos y correos con formato inválido. \\
+DEF-07 & Medio & Rendimiento & Las métricas web esenciales no cumplen los umbrales, sobre todo en móvil. \\
+DEF-10 & Medio & Seguridad & No se envía ninguna cabecera de seguridad HTTP. \\
+DEF-12 & Medio & Seguridad & El login revela si un usuario existe (permite enumeración). \\
+DEF-13 & Medio & Seguridad & La API acepta peticiones con credenciales desde cualquier origen (CORS mal configurado). \\
+DEF-15 & Medio & Compatibilidad & En ancho de teléfono el menú no colapsa y el carrusel se ve vacío. \\
+DEF-08 & Leve & Catálogo & El catálogo general y el filtro por categoría no son consistentes. \\
+DEF-09 & Leve & Elementos de presentación & El video de About us se descarga en todas las páginas aunque nunca se muestre. \\
+DEF-11 & Leve & Seguridad & La contraseña se envía en base64, que es reversible. \\
+DEF-14 & Leve & Compatibilidad & En el motor de Firefox los enlaces del menú superior se parten en dos líneas. \\
+\end{longtable}
+\endgroup
+
+Los dos defectos \textbf{críticos} están en el flujo de compra, que es el crítico del
+negocio: se puede emitir un comprobante con el carrito vacío (DEF-03) y el número de
+tarjeta no se valida (DEF-04). Entre los medios destacan los tres de seguridad confirmados
+desde la API (DEF-10, DEF-12 y DEF-13) y el de accesibilidad de los formularios (DEF-01).
+
+\subsection*{9.3 Ejecución de los casos de arreglos ortogonales (CP-AO)}
+\addcontentsline{toc}{subsection}{9.3 Ejecución de los casos de arreglos ortogonales (CP-AO)}
+
+Los \textbf{8 casos de arreglos ortogonales} (\texttt{CP-AO-01} \dots{} \texttt{CP-AO-08})
+se \textbf{ejecutaron el 11 de octubre de 2026} sobre la versión en producción de Demoblaze
+(\url{https://www.demoblaze.com}) en Google Chrome, usando el formulario \emph{Place Order}
+con un carrito de un producto (Samsung galaxy s6, total 360 USD). Demoblaze emite sus
+mensajes de validación mediante diálogos nativos de JavaScript (\texttt{alert}); para
+ejecutar los casos de forma automatizada sin que esos diálogos bloquearan el navegador se
+interceptó \texttt{window.alert} capturando su texto, \textbf{sin alterar la lógica de
+validación} del sitio (técnica estándar de automatización de pruebas E2E).
+
+\textbf{Resultado: los 8 casos se ejecutaron y los 8 pasaron} —el resultado real coincidió
+con el esperado en todos—. No se encontraron defectos nuevos.
+
+\begingroup
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\footnotesize
+\caption{Resultados reales de la ejecución de los casos de arreglos ortogonales.}\label{tab:cpao-ejec}
+\begin{tabularx}{\textwidth}{@{}l L{4.4cm} Y c@{}}
+\toprule
+\textbf{Caso} & \textbf{Resultado esperado} & \textbf{Resultado real observado} & \textbf{Veredicto} \\
+\midrule
+CP-AO-01 & Compra exitosa + comprobante & Comprobante Id 4233245, Amount 360 USD, titular y tarjeta correctos & Pasó \\
+CP-AO-02 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+CP-AO-03 & Compra exitosa + comprobante & Comprobante Id 6753988, Amount 360 USD, con Country/City/Year vacíos & Pasó \\
+CP-AO-04 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+CP-AO-05 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+CP-AO-06 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+CP-AO-07 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+CP-AO-08 & Rechazo (R5) & \texttt{"Please fill out Name and Creditcard."} & Pasó \\
+\midrule
+\multicolumn{4}{@{}l@{}}{\footnotesize \textbf{8 ejecutados · 8 aprobados · 0 fallidos · 0 defectos nuevos} (tasa de aprobación 100\,\%).}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+\textbf{Hallazgo confirmado.} El caso \texttt{CP-AO-03} completó la compra con Country, City
+y Year vacíos, lo que \textbf{confirma empíricamente} que de los seis campos del formulario
+solo \emph{Name} y \emph{Credit card} son obligatorios (regla R5). Además, en
+\texttt{CP-AO-01} y \texttt{CP-AO-03} el monto del comprobante (360 USD) coincidió con el
+total del carrito, confirmando también la regla R3. Estos ocho casos refuerzan lo ya
+observado en los casos \texttt{CP-COM-04}, \texttt{CP-COM-05} y \texttt{CP-COM-06} del plan.
+
+Las evidencias gráficas se encuentran en la carpeta \texttt{evidencias-cp-ao/}. Se muestran
+dos a continuación:
+
+\begin{figure}[htb]\centering
+\includegraphics[width=0.78\textwidth]{evidencias-cp-ao/CP-AO-01_exito.jpg}
+\caption{\texttt{CP-AO-01}: compra exitosa con los seis campos diligenciados (comprobante con monto igual al total del carrito).}
+\end{figure}
+
+\begin{figure}[htb]\centering
+\includegraphics[width=0.78\textwidth]{evidencias-cp-ao/CP-AO-08_rechazo_form.jpg}
+\caption{\texttt{CP-AO-08}: estado del formulario con \emph{Name}, \emph{Country} y \emph{Credit card} vacíos; al pulsar \emph{Purchase} el sistema rechazó la compra con el mensaje de validación.}
+\end{figure}
+
+%==================================================================
+%  ANEXOS
+%==================================================================
+\FloatBarrier
+\section*{Anexos}
+\phantomsection\addcontentsline{toc}{section}{Anexos}
+
+\subsection*{Anexo A — Plan de Pruebas (documento ejecutado)}
+\addcontentsline{toc}{subsection}{Anexo A — Plan de Pruebas (documento ejecutado)}
+
+Documento de plan de pruebas completo y ejecutado del proyecto, en PDF:
+\texttt{plan-\allowbreak{}completo-\allowbreak{}ejecutado.pdf}. Contiene el desarrollo íntegro del plan (alcance,
+DoR/DoD, estrategia, entregables, dependencias, entorno, gestión de riesgos y roles) y el
+reporte de ejecución con evidencias gráficas de las pruebas de integración, rendimiento,
+seguridad y compatibilidad. Es la fuente de las cifras consolidadas en la sección 9 de este
+documento.
+
+\subsection*{Anexo B — Suite de casos de prueba}
+\addcontentsline{toc}{subsection}{Anexo B — Suite de casos de prueba}
+
+Hoja de cálculo \texttt{suite-casos-de-prueba-entrega1.xlsx}, con cuatro hojas:
+
+\begin{itemize}
+  \item \textbf{Casos de prueba:} los 68 casos diseñados (60 del plan + 8 arreglos
+        ortogonales \texttt{CP-AO}), con las columnas del formato IEEE 829 (ID, módulo,
+        prioridad, técnica de diseño, precondiciones, pasos, datos de prueba, resultado
+        esperado y criterio de referencia).
+  \item \textbf{Registro de ejecución:} el resultado real de cada caso ejecutado del plan,
+        con fecha, versión del navegador, resultado y referencia a la evidencia. Los ocho
+        \texttt{CP-AO} se ejecutaron el 11 de octubre de 2026 (8 aprobados, 0 fallidos);
+        su resultado se detalla en la sección 9.3 y sus evidencias en \texttt{evidencias-cp-ao/}.
+  \item \textbf{Reporte de defectos:} los 15 defectos registrados, con pasos de
+        reproducción, resultado obtenido frente al esperado, severidad y evidencia.
+  \item \textbf{Resumen:} métricas de diseño, ejecución y defectos calculadas con fórmulas
+        sobre las demás hojas.
+\end{itemize}
+
+\end{document}

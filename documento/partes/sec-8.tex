@@ -1,0 +1,385 @@
+%==================================================================
+% SECCIÓN 8 — Diseño y documentación de casos de prueba
+% Entrega I · Construcción de Software y Pruebas · Grupo A · 2026-2
+% Equipo: Joshua Mendez, Edinson Pedroza
+% Cuerpo para \input dentro del documento maestro. Reutiliza la plantilla
+% de plan-completo-ejecutado.tex: columnas L{} e Y, booktabs, tabularx a
+% \textwidth y \footnotesize para las tablas anchas.
+%==================================================================
+\FloatBarrier
+\section*{8. Diseño y documentación de casos de prueba}
+\phantomsection\addcontentsline{toc}{section}{8. Diseño y documentación de casos de prueba}
+
+\subsection*{8.1 Enfoque del diseño y técnicas de caja negra}
+\addcontentsline{toc}{subsection}{8.1 Enfoque del diseño y técnicas de caja negra}
+
+El diseño de casos para Demoblaze (\url{https://www.demoblaze.com}) se apoya en las
+cuatro técnicas de diseño de caja negra que exige la rúbrica: \textbf{partición de
+equivalencias}, \textbf{análisis de valores límite}, \textbf{tabla de decisión} y
+\textbf{arreglos ortogonales}. Como el sistema es software de terceros —sin código
+fuente ni acceso al servidor o a la base de datos—, todas las técnicas operan sobre
+las entradas y salidas observables desde el navegador, que es justamente el ámbito de
+la caja negra.
+
+La suite completa está documentada en el anexo (hoja de cálculo con las columnas del
+formato IEEE 829 y su registro de ejecución) y reúne \textbf{60 casos ya ejecutados},
+cuyos resultados reales se consolidan en la sección 9. A esos 60 casos se suman
+\textbf{8 casos nuevos de arreglos ortogonales} (\texttt{CP-AO-01} \dots{}
+\texttt{CP-AO-08}), que completan la cuarta técnica y se desarrollan en el apartado
+8.3. Con ello la suite alcanza \textbf{68 casos diseñados} en total.
+
+\medskip
+\noindent\textbf{Nota de integridad.} Los ocho casos \texttt{CP-AO} están
+\emph{diseñados} en esta sección; su ejecución y resultados se reportan en la
+sección 9. En este documento no se les atribuye ningún resultado de ejecución. Su
+comportamiento esperado se deriva de las reglas de negocio observadas en el sistema y
+está corroborado por los casos ya ejecutados \texttt{CP-COM-04}, \texttt{CP-COM-05} y
+\texttt{CP-COM-06}, que ejercitan las mismas validaciones de obligatoriedad del
+formulario de compra.
+
+\subsection*{8.2 Cobertura por técnica de diseño}
+\addcontentsline{toc}{subsection}{8.2 Cobertura por técnica de diseño}
+
+La Tabla~\ref{tab:cobertura-tecnicas} resume cuántos casos aporta cada técnica. Las
+cuatro técnicas de la rúbrica quedan cubiertas: las tres primeras ya ejecutadas dentro
+de los 60 casos del plan, y los arreglos ortogonales mediante los 8 casos nuevos. Se
+incluyen además la transición de estados (ciclo del carrito) y un bloque de técnicas
+complementarias —comprobaciones de consistencia e inspección, más los casos de
+integración, rendimiento, seguridad y compatibilidad— que no derivan de una técnica
+formal de diseño de entradas pero forman parte de la suite ejecutada.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{table}[htb]\centering\small
+\caption{Cobertura de la suite por técnica de diseño.}\label{tab:cobertura-tecnicas}
+\begin{tabularx}{\textwidth}{@{}L{4.8cm} >{\centering\arraybackslash}p{1.5cm} L{3.4cm} Y@{}}
+\toprule
+\textbf{Técnica de diseño} & \textbf{N.\textsuperscript{o} de casos} & \textbf{Estado} & \textbf{Observación} \\
+\midrule
+Partición de equivalencias & 18 & Ejecutados (§9) & Campos de texto de los cuatro formularios (válido / inválido / vacío). \\
+Valores límite & 2 & Ejecutados (§9) & Longitudes y bordes de mes/año del formulario de compra. \\
+Tabla de decisión & 4 & Ejecutados (§9) & Combinaciones de sesión, carrito y campos de la compra. \\
+\textbf{Arreglos ortogonales} & \textbf{8} & \textbf{Ejecutados (§9): 8/8 aprobados} & \textbf{Casos nuevos \texttt{CP-AO-01..08}; interacción por pares de los 6 campos de \emph{Place Order}.} \\
+\midrule
+Transición de estados & 11 & Ejecutados (§9) & Ciclo del carrito: vacío, con uno, con varios, tras eliminar y tras comprar. \\
+Otras complementarias & 25 & Ejecutados (§9) & Consistencia, inspección, integración, rendimiento, seguridad y compatibilidad. \\
+\midrule
+\textbf{Total diseñado} & \textbf{68} & \multicolumn{2}{@{}l@{}}{\footnotesize 60 ejecutados (anexo, §9) + 8 arreglos ortogonales ejecutados (§9)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+Las cuatro técnicas de la rúbrica —partición de equivalencias, valores límite, tabla
+de decisión y arreglos ortogonales— quedan así cubiertas. Las tres primeras ya
+estaban ejercitadas en los 60 casos ejecutados; los arreglos ortogonales se añaden con
+los ocho casos \texttt{CP-AO} que se diseñan a continuación.
+
+\subsection*{8.3 Arreglos ortogonales (Taguchi): diseño de los casos CP-AO}
+\addcontentsline{toc}{subsection}{8.3 Arreglos ortogonales (Taguchi): diseño de los casos CP-AO}
+
+\subsubsection*{8.3.1 Por qué esta técnica y qué aporta a la suite}
+
+La suite ya ejecutada aplica tres de las cuatro técnicas clásicas de caja negra. Falta
+la cuarta, \textbf{arreglos ortogonales}, que es la que permite cubrir de forma
+sistemática las \emph{combinaciones} entre varios parámetros de entrada. El arreglo
+ortogonal resuelve un problema concreto: cuando un formulario tiene varios campos, el
+número de combinaciones crece de forma exponencial y probarlas todas deja de ser
+viable. Taguchi demostró que la mayoría de los defectos de interacción se disparan por
+la combinación de \textbf{dos} factores a la vez, no por la de seis simultáneos. Un
+arreglo ortogonal garantiza que \emph{todas las parejas} de niveles queden cubiertas
+con una fracción mínima de corridas; esta propiedad se llama cobertura \textbf{pairwise}
+(de a pares).
+
+\subsubsection*{8.3.2 Función bajo prueba, factores y niveles}
+
+Al pulsar \textbf{Place Order} sobre un carrito con productos, Demoblaze abre un
+formulario con el total precargado y \textbf{seis campos editables}: Name, Country,
+City, Credit card, Month y Year. Al pulsar \textbf{Purchase}, el sistema decide si
+acepta o rechaza la compra en función de lo que tengan esos seis campos: una salida
+que depende de la combinación de varios campos de entrada, que es el escenario para el
+que sirve un arreglo ortogonal.
+
+Tomamos los seis campos como \textbf{factores} y a cada uno le asignamos \textbf{dos
+niveles} (rellenado-válido / vacío), que es la partición mínima y a la vez la más
+informativa para una validación de obligatoriedad (regla R5). El dominio de valores
+válidos ya se cubre con partición de equivalencias y valores límite en los casos
+\texttt{CP-COM-05} y \texttt{CP-COM-06}; aquí no se repite ese trabajo, sino que se
+estudia la \textbf{interacción entre los seis campos}.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\small
+\caption{Factores y niveles del arreglo ortogonal.}\label{tab:factores}
+\begin{tabularx}{\textwidth}{@{}>{\centering\arraybackslash}p{1.4cm} L{2.8cm} L{5.0cm} Y@{}}
+\toprule
+\textbf{Factor} & \textbf{Campo} & \textbf{Nivel 1 (rellenado-válido)} & \textbf{Nivel 2 (vacío)} \\
+\midrule
+A & Name & \texttt{Joshua Mendez} & \emph{(campo en blanco)} \\
+B & Country & \texttt{Colombia} & \emph{(campo en blanco)} \\
+C & City & \texttt{Bogotá} & \emph{(campo en blanco)} \\
+D & Credit card & \texttt{4111\allowbreak1111\allowbreak1111\allowbreak1111} & \emph{(campo en blanco)} \\
+E & Month & \texttt{12} & \emph{(campo en blanco)} \\
+F & Year & \texttt{2030} & \emph{(campo en blanco)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+\subsubsection*{8.3.3 La explosión combinatoria: \texorpdfstring{$2^{6}=64$}{2\^{}6=64}}
+
+Con 6 factores y 2 niveles cada uno, la combinación exhaustiva es
+
+\[ 2^{6} = 2\times 2\times 2\times 2\times 2\times 2 = 64 \]
+
+\noindent es decir, \textbf{64 corridas}. Para un solo formulario de una tienda de
+demostración, probado a mano sobre un entorno de producción ajeno y compartido (véanse
+las restricciones del plan de pruebas), 64 corridas son inviables y, sobre todo,
+innecesarias: la enorme mayoría no aporta información nueva porque repite parejas de
+condiciones ya vistas.
+
+\subsubsection*{8.3.4 Arreglo ortogonal seleccionado: \texorpdfstring{L8 ($2^{7}$)}{L8 (2\^{}7)}}
+
+Para 6 factores de 2 niveles, el arreglo de Taguchi más pequeño que los acomoda es el
+\textbf{L8 ($2^{7}$)}: 8 corridas y hasta 7 columnas de 2 niveles. Usamos 6 de sus 7
+columnas (una por factor) y dejamos la séptima sin asignar. El L8 reduce las 64
+corridas exhaustivas a solo \textbf{8}. La Tabla~\ref{tab:l8-canonico} muestra la
+matriz estándar en forma canónica y la Tabla~\ref{tab:l8-campos} la misma matriz
+traducida a los valores de cada campo.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\small
+\caption{Arreglo L8 en forma canónica. Cada fila es una corrida; el valor es el nivel (1 o 2) que toma el factor.}\label{tab:l8-canonico}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{c cccccc c}
+\toprule
+\textbf{Corrida} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{E} & \textbf{F} & \textbf{Col.\,7} \\
+ & {\scriptsize Name} & {\scriptsize Country} & {\scriptsize City} & {\scriptsize Card} & {\scriptsize Month} & {\scriptsize Year} & {\scriptsize (s/uso)} \\
+\midrule
+1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+2 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
+3 & 1 & 2 & 2 & 1 & 1 & 2 & 2 \\
+4 & 1 & 2 & 2 & 2 & 2 & 1 & 1 \\
+5 & 2 & 1 & 2 & 1 & 2 & 1 & 2 \\
+6 & 2 & 1 & 2 & 2 & 1 & 2 & 1 \\
+7 & 2 & 2 & 1 & 1 & 2 & 2 & 1 \\
+8 & 2 & 2 & 1 & 2 & 1 & 1 & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\endgroup
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\small
+\caption{Arreglo L8 traducido a los campos. Nivel 1 = lleno, nivel 2 = vacío.}\label{tab:l8-campos}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{c cccccc}
+\toprule
+\textbf{Corrida} & \textbf{Name} & \textbf{Country} & \textbf{City} & \textbf{Credit card} & \textbf{Month} & \textbf{Year} \\
+\midrule
+1 & lleno & lleno & lleno & lleno & lleno & lleno \\
+2 & lleno & lleno & lleno & \textbf{vacío} & \textbf{vacío} & \textbf{vacío} \\
+3 & lleno & \textbf{vacío} & \textbf{vacío} & lleno & lleno & \textbf{vacío} \\
+4 & lleno & \textbf{vacío} & \textbf{vacío} & \textbf{vacío} & \textbf{vacío} & lleno \\
+5 & \textbf{vacío} & lleno & \textbf{vacío} & lleno & \textbf{vacío} & lleno \\
+6 & \textbf{vacío} & lleno & \textbf{vacío} & \textbf{vacío} & lleno & \textbf{vacío} \\
+7 & \textbf{vacío} & \textbf{vacío} & lleno & lleno & \textbf{vacío} & \textbf{vacío} \\
+8 & \textbf{vacío} & \textbf{vacío} & lleno & \textbf{vacío} & lleno & lleno \\
+\bottomrule
+\end{tabular}
+\end{table}
+\endgroup
+
+\subsubsection*{8.3.5 Justificación de la reducción 64 \texorpdfstring{$\rightarrow$}{->} 8 y garantía pairwise}
+
+¿Qué se pierde al pasar de 64 a 8 corridas? Nada de la cobertura de a pares, que es
+donde se concentran los defectos de interacción. Un arreglo es \emph{ortogonal} cuando,
+para \textbf{cualquier par de columnas}, las cuatro combinaciones posibles de sus
+niveles —(1,1), (1,2), (2,1), (2,2)— aparecen \textbf{el mismo número de veces}. En el
+L8 cada una aparece exactamente \textbf{dos veces} en cada par de columnas. Con 6
+factores existen $C(6,2)=15$ parejas de campos, y el L8 cubre las cuatro combinaciones
+de las 15 parejas en solo 8 corridas. La Tabla~\ref{tab:pairwise} lo verifica sobre la
+pareja crítica Name--Credit card, que son los dos campos obligatorios según R5.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\small
+\caption{Verificación de cobertura de la pareja crítica Name (A) -- Credit card (D).}\label{tab:pairwise}
+\begin{tabularx}{\textwidth}{@{}L{5.4cm} Y >{\centering\arraybackslash}p{1.8cm}@{}}
+\toprule
+\textbf{Combinación (Name, Card)} & \textbf{Corridas donde aparece} & \textbf{Veces} \\
+\midrule
+(lleno, lleno) & 1, 3 & 2 \\
+(lleno, vacío) & 2, 4 & 2 \\
+(vacío, lleno) & 5, 7 & 2 \\
+(vacío, vacío) & 6, 8 & 2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+Lo que el L8 \textbf{no} garantiza es la cobertura de interacciones de orden superior
+(tres o más campos simultáneos en una combinación específica). Esa limitación es
+aceptable y deliberada: la evidencia de Taguchi y de la literatura de \emph{pairwise
+testing} indica que los fallos por combinación de tres o más factores son marginales
+frente a los de a pares, y cubrirlos exigiría volver hacia las 64 corridas. Se cambia
+un riesgo residual pequeño por una reducción del \textbf{87,5\,\%} en el número de
+casos (de 64 a 8).
+
+\textbf{¿Por qué 8 corridas y no 6?} Si el único objetivo fuera la cobertura pairwise
+mínima, un \emph{covering array} lograría los 6 factores binarios en apenas 6 corridas.
+Se usan 8 porque se exige la propiedad más fuerte de \textbf{arreglo ortogonal}: no
+solo que cada par de niveles aparezca al menos una vez (covering array), sino que
+aparezca el mismo número de veces (cobertura pairwise \emph{uniforme}, que obliga a que
+el número de corridas sea múltiplo de 4). Esa uniformidad aporta balance estadístico
+entre los factores —el fundamento del diseño de experimentos de Taguchi—; las 2
+corridas extra son el precio de esa garantía de equilibrio.
+
+\subsubsection*{8.3.6 Derivación del resultado esperado (R1, R3, R5)}
+
+El resultado esperado de cada corrida no se inventa: se deduce de las reglas de negocio
+observadas en el sistema.
+
+\begin{itemize}
+  \item \textbf{R1 — No se puede completar la compra con el carrito vacío.} Todas las
+        corridas comparten la precondición de carrito con al menos un producto, de modo
+        que R1 queda satisfecha y no es la variable bajo estudio. Por la misma razón, la
+        \textbf{sesión iniciada} se fija como precondición constante y \textbf{no entra
+        como factor}: el objetivo es la interacción entre los seis campos, no el efecto
+        de la autenticación (que ya prueba por separado \texttt{CP-COM-03}).
+  \item \textbf{R5 — Name y Credit card son obligatorios.} Si Name o Credit card quedan
+        vacíos, el sistema rechaza la compra con el mensaje exacto ``Please fill out
+        Name and Creditcard.'' y no genera comprobante. Esta es la regla que decide el
+        resultado de cada corrida.
+  \item \textbf{R3 — El total mostrado = suma de los precios de los productos.} Cuando
+        la compra se completa, el monto del comprobante debe ser igual al total del
+        carrito.
+\end{itemize}
+
+La regla operativa que se desprende de R5 es: la compra tiene éxito \emph{si, y solo
+si}, Name y Credit card están ambos rellenados (con el carrito no vacío por R1). Los
+campos Country, City, Month y Year no participan en la validación de obligatoriedad. La
+Tabla~\ref{tab:derivacion} aplica esta regla a las 8 corridas.
+
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[htb]\centering\small
+\caption{Derivación del resultado esperado de cada corrida (R1, R3, R5).}\label{tab:derivacion}
+\begin{tabularx}{\textwidth}{@{}>{\centering\arraybackslash}p{1.3cm} >{\centering\arraybackslash}p{1.5cm} >{\centering\arraybackslash}p{1.7cm} >{\centering\arraybackslash}p{2.6cm} Y@{}}
+\toprule
+\textbf{Corrida} & \textbf{Name} & \textbf{Credit card} & \textbf{¿Ambos obligatorios llenos?} & \textbf{Resultado esperado} \\
+\midrule
+1 & lleno & lleno & Sí & Compra exitosa + comprobante (R3). \\
+2 & lleno & vacío & No (falta tarjeta) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+3 & lleno & lleno & Sí & Compra exitosa + comprobante (R3). \\
+4 & lleno & vacío & No (falta tarjeta) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+5 & vacío & lleno & No (falta nombre) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+6 & vacío & vacío & No (faltan ambos) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+7 & vacío & lleno & No (falta nombre) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+8 & vacío & vacío & No (faltan ambos) & Rechazo: ``Please fill out Name and Creditcard.'' \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\endgroup
+
+Resultado: \textbf{2 compras exitosas} (corridas 1 y 3) y \textbf{6 rechazos}
+(corridas 2, 4, 5, 6, 7 y 8). La corrida \textbf{3} es la más interesante desde el
+diseño: Name y Credit card están llenos, pero Country, City y Year quedan vacíos, y aun
+así la compra se completa. Esto evidencia que, de los seis campos, el sistema solo
+trata como obligatorios dos —el tipo de hallazgo que el arreglo ortogonal expone de
+forma económica y que una sola prueba del ``camino feliz'' jamás mostraría—.
+
+\subsubsection*{8.3.7 Casos de prueba formales (IEEE 829)}
+
+Las 8 corridas se documentan como casos de prueba con el formato IEEE 829 de la suite
+(ID, Módulo, Prioridad, Técnica de diseño, Precondiciones, Pasos, Datos de prueba,
+Resultado esperado y Criterio de referencia). Los identificadores \texttt{CP-AO-01}
+\dots{} \texttt{CP-AO-08} no colisionan con ningún ID de la suite. Para mantener la
+tabla legible, las tres columnas que son idénticas en los ocho casos se declaran una
+sola vez aquí, y la Tabla~\ref{tab:cp-ao} recoge las seis columnas restantes:
+
+\begin{itemize}
+  \item \textbf{Módulo:} Orden de compra.
+  \item \textbf{Técnica de diseño:} Arreglos ortogonales.
+  \item \textbf{Precondiciones:} sesión iniciada y carrito con al menos un producto;
+        ventana \emph{Place Order} abierta.
+\end{itemize}
+
+\textbf{Criterio de priorización.} Las dos corridas de compra exitosa
+(\texttt{CP-AO-01} y \texttt{CP-AO-03}) se marcan \textbf{Alta} porque ejercitan el
+camino crítico del negocio —completar una compra—, prioridad máxima según el apartado
+3.6 del plan. Las seis corridas de rechazo por R5 se marcan \textbf{Media}, en
+coherencia con los casos negativos equivalentes de la suite (\texttt{CP-COM-05} y
+\texttt{CP-COM-06}, también Media).
+
+\medskip
+\noindent\textbf{Estado de ejecución.} Los ocho casos de la Tabla~\ref{tab:cp-ao} están
+\emph{diseñados} en esta sección; su ejecución y resultados se reportan en la
+sección 9. No se consignan aquí resultados, capturas ni tiempos de ejecución. El
+comportamiento esperado de los campos obligatorios ya está corroborado por los casos
+ejecutados \texttt{CP-COM-04}, \texttt{CP-COM-05} y \texttt{CP-COM-06}.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{@{}L{1.5cm} L{1.0cm} L{3.1cm} L{2.8cm} L{3.4cm} L{2.8cm}@{}}
+\caption{Casos de prueba de arreglos ortogonales en formato IEEE 829 (\texttt{CP-AO-01}--\texttt{CP-AO-08}). Módulo: Orden de compra; Técnica: Arreglos ortogonales; Precondiciones: sesión iniciada, carrito con al menos un producto y ventana \emph{Place Order} abierta.}\label{tab:cp-ao}\\
+\toprule
+\textbf{ID} & \textbf{Prior.} & \textbf{Pasos} & \textbf{Datos de prueba} & \textbf{Resultado esperado} & \textbf{Criterio de referencia} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\footnotesize\emph{Tabla~\ref{tab:cp-ao} (continuación)}}\\
+\toprule
+\textbf{ID} & \textbf{Prior.} & \textbf{Pasos} & \textbf{Datos de prueba} & \textbf{Resultado esperado} & \textbf{Criterio de referencia} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r@{}}{\footnotesize\emph{continúa en la página siguiente}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+CP-AO-01 & Alta & 1.~Rellenar los seis campos con datos válidos. 2.~Pulsar Purchase. & Name: Joshua Mendez; Country: Colombia; City: Bogotá; Credit card: 4111\allowbreak1111\allowbreak1111\allowbreak1111; Month: 12; Year: 2030. & La compra se confirma y se muestra un comprobante con identificador, monto, titular y fecha. El monto es igual al total del carrito (R3). & Convención del dominio / R5: con Name y Credit card completados la compra procede; coherencia con R3 en el comprobante. \\
+\midrule
+CP-AO-02 & Media & 1.~Rellenar Name, Country y City. 2.~Dejar vacíos Credit card, Month y Year. 3.~Pulsar Purchase. & Name: Joshua Mendez; Country: Colombia; City: Bogotá; Credit card: (vacío); Month: (vacío); Year: (vacío). & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Credit card es obligatorio. \\
+\midrule
+CP-AO-03 & Alta & 1.~Rellenar Name, Credit card y Month. 2.~Dejar vacíos Country, City y Year. 3.~Pulsar Purchase. & Name: Joshua Mendez; Country: (vacío); City: (vacío); Credit card: 4111\allowbreak1111\allowbreak1111\allowbreak1111; Month: 12; Year: (vacío). & La compra se confirma y se muestra el comprobante (monto = total del carrito, R3), aunque Country, City y Year estén vacíos. Evidencia que esos campos no son obligatorios. & Convención del dominio / R5: solo Name y Credit card son obligatorios; coherencia con R3. \\
+\midrule
+CP-AO-04 & Media & 1.~Rellenar Name y Year. 2.~Dejar vacíos Country, City, Credit card y Month. 3.~Pulsar Purchase. & Name: Joshua Mendez; Country: (vacío); City: (vacío); Credit card: (vacío); Month: (vacío); Year: 2030. & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Credit card es obligatorio. \\
+\midrule
+CP-AO-05 & Media & 1.~Rellenar Country, Credit card y Year. 2.~Dejar vacíos Name, City y Month. 3.~Pulsar Purchase. & Name: (vacío); Country: Colombia; City: (vacío); Credit card: 4111\allowbreak1111\allowbreak1111\allowbreak1111; Month: (vacío); Year: 2030. & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Name es obligatorio. \\
+\midrule
+CP-AO-06 & Media & 1.~Rellenar Country y Month. 2.~Dejar vacíos Name, City, Credit card y Year. 3.~Pulsar Purchase. & Name: (vacío); Country: Colombia; City: (vacío); Credit card: (vacío); Month: 12; Year: (vacío). & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Name y Credit card son obligatorios. \\
+\midrule
+CP-AO-07 & Media & 1.~Rellenar City y Credit card. 2.~Dejar vacíos Name, Country, Month y Year. 3.~Pulsar Purchase. & Name: (vacío); Country: (vacío); City: Bogotá; Credit card: 4111\allowbreak1111\allowbreak1111\allowbreak1111; Month: (vacío); Year: (vacío). & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Name es obligatorio. \\
+\midrule
+CP-AO-08 & Media & 1.~Rellenar City, Month y Year. 2.~Dejar vacíos Name, Country y Credit card. 3.~Pulsar Purchase. & Name: (vacío); Country: (vacío); City: Bogotá; Credit card: (vacío); Month: 12; Year: 2030. & El sistema rechaza la compra con el mensaje ``Please fill out Name and Creditcard.'' No genera comprobante ni vacía el carrito. & Convención del dominio / R5: Name y Credit card son obligatorios. \\
+\end{longtable}
+\endgroup
+
+\subsubsection*{8.3.8 Resumen del bloque de arreglos ortogonales}
+
+\begin{itemize}
+  \item \textbf{Técnica:} arreglos ortogonales de Taguchi, la cuarta técnica de caja
+        negra que completa la suite.
+  \item \textbf{Factores:} los 6 campos de \emph{Place Order}, con 2 niveles cada uno
+        (rellenado-válido / vacío).
+  \item \textbf{Combinación exhaustiva:} $2^{6}=64$ corridas; \textbf{arreglo elegido:}
+        L8 ($2^{7}$), que cubre todas las parejas de niveles (pairwise) en \textbf{8
+        corridas}, una reducción del 87,5\,\%.
+  \item \textbf{Resultados esperados:} derivados de R1, R3 y R5; 2 compras exitosas
+        (\texttt{CP-AO-01}, \texttt{CP-AO-03}) y 6 rechazos con el mensaje ``Please fill
+        out Name and Creditcard.''.
+  \item \textbf{Hallazgo de diseño:} la corrida 3 muestra que de los 6 campos solo Name
+        y Credit card son obligatorios.
+  \item \textbf{Estado:} los ocho casos fueron \emph{ejecutados} (11-oct-2026) con
+        resultado 8/8 aprobados; el detalle y las evidencias están en la sección 9.3.
+\end{itemize}
