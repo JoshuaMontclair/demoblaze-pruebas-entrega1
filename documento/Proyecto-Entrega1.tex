@@ -257,8 +257,8 @@ ejecución, sino comportamientos defectuosos del producto que quedaron documenta
 9.2). Encontrar y registrar esos fallos es, de hecho, el objetivo del ejercicio sobre un
 producto de terceros que no se puede corregir. La \textbf{cobertura} se queda en 73,3\,\%
 por dos motivos trazables en el registro: 12 casos están \emph{bloqueados por las
-restricciones del propio plan} —no se crean cuentas ni se escriben contraseñas en un sitio
-ajeno (módulos Registro y Autenticación y el caso de compra con sesión), y las pruebas de
+restricciones del propio plan} —los módulos Registro y Autenticación y el caso de compra
+con sesión no se ejecutan por seguridad, y las pruebas de
 carga y estrés no se ejecutan sin un entorno propio ni autorización escrita del
 propietario (restricción C1 del plan)—, y 4 casos más quedaron sin cerrar en la ventana de
 trabajo (3 no ejecutados y 1 no concluyente). Si se descuentan los 12 casos no ejecutables
